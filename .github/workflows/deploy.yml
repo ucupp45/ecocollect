@@ -1,4 +1,4 @@
-name: Deploy Aplikasi ke EC2
+name: SECRET_ECOCOLLECT
 
 on:
   push:
