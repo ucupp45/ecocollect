@@ -9,7 +9,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: SECRET_ECOCOLLECT
+      - name: Eksekusi SSH dan Deploy Docker
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}

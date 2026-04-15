@@ -9,3 +9,13 @@ export async function GET() {
     return NextResponse.json({ error: 'Gagal ambil jadwal' }, { status: 500 });
   }
 }
+
+export async function POST(request) {
+  try {
+    const { rute, hari, jam } = await request.json();
+    await pool.query('INSERT INTO schedules (rute, hari, jam) VALUES (?, ?, ?)', [rute, hari, jam]);
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}

@@ -47,3 +47,24 @@ export async function GET() {
     return NextResponse.json({ error: 'Gagal ambil data' }, { status: 500 });
   }
 }
+
+export async function PATCH(request) {
+  try {
+    const { id, status } = await request.json();
+    await pool.query('UPDATE reports SET status = ? WHERE id = ?', [status, id]);
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+// Tambahkan ini di app/api/reports/route.js
+export async function DELETE(request) {
+  try {
+    const { id } = await request.json();
+    await pool.query('DELETE FROM reports WHERE id = ?', [id]);
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
