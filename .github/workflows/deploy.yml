@@ -1,0 +1,42 @@
+name: Deploy Aplikasi ke EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Eksekusi SSH dan Deploy Docker
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            # 1. Tarik kode terbaru dari GitHub
+            rm -rf ecocollect-uts
+            git clone https://github.com/${{ github.repository }}.git ecocollect-uts
+            cd ecocollect-uts
+            
+            # 2. Buat file .env di dalam server EC2
+            echo "DB_HOST=${{ secrets.DB_HOST }}" > .env
+            echo "DB_USER=${{ secrets.DB_USER }}" >> .env
+            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+            echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
+            echo "AWS_REGION=${{ secrets.AWS_REGION }}" >> .env
+            echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> .env
+            echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> .env
+            echo "AWS_S3_BUCKET_NAME=${{ secrets.AWS_S3_BUCKET_NAME }}" >> .env
+            
+            # 3. Build Docker Image
+            sudo docker build -t ecocollect-app .
+            
+            # 4. Hapus container lama (jika ada)
+            sudo docker stop web-app || true
+            sudo docker rm web-app || true
+            
+            # 5. Jalankan Container Baru di Port 80 (Port Web Publik)
+            sudo docker run -d --name web-app -p 80:3000 --env-file .env ecocollect-app
