@@ -1,4 +1,4 @@
-name: SECRET_ECOCOLLECT
+name: Deploy Aplikasi ke EC2
 
 on:
   push:
@@ -9,7 +9,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Eksekusi SSH dan Deploy Docker
+      - name: SECRET_ECOCOLLECT
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
